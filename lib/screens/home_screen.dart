@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'medicine_list_screen.dart';
 import 'medicine_alarm_screen.dart';
-import 'coming_soon_screen.dart';
+import 'doctors_list_screen.dart';
 import 'about_me_screen.dart'; // Import AboutMeScreen
 
 class HomeScreen extends StatelessWidget {
@@ -79,11 +79,11 @@ class HomeScreen extends StatelessWidget {
                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (_) => const ComingSoonScreen(),
+                        builder: (_) => const DoctorsListScreen(),
                       ),
                     );
                   },
-                  child: Text("3. Coming Soon"),
+                  child: Text("3. Doctors List"),
                 ),
                 SizedBox(height: 20),
                 ElevatedButton(

@@ -28,18 +28,6 @@ class _LoginScreenState extends State<LoginScreen> {
       );
     } else {
       setState(() => message = "❌ Invalid ID or password.");
-    }
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Stack(
-        children: [
-          Positioned.fill(
-            child: Container(
-              decoration: BoxDecoration(
-                gradient: LinearGradient(
                   colors: [Color(0xFF80F6FF), Color(0xFF69EC91)],
                   begin: Alignment.centerLeft,
                   end: Alignment.centerRight,
