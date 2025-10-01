@@ -18,10 +18,9 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(title: Text("Healthcare App - Home")),
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF80F6FF), Color(0xFF69EC91)],
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
+          image: DecorationImage(
+            image: AssetImage('assets/background.jpg'),
+            fit: BoxFit.cover,
           ),
         ),
         child: Center(

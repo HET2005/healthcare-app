@@ -60,8 +60,8 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
             decoration: BoxDecoration(
               gradient: LinearGradient(
                 colors: [
-                  Color(0xFF80F6FF).withOpacity(0.4),
-                  Color(0xFF69EC91).withOpacity(0.4),
+                  Color.fromARGB(255, 232, 253, 255).withOpacity(0.4),
+                  Color.fromARGB(255, 216, 255, 228).withOpacity(0.4),
                 ],
                 begin: Alignment.topLeft,
                 end: Alignment.bottomRight,
@@ -142,10 +142,9 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
       ),
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF80F6FF), Color(0xFF69EC91)],
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
+          image: DecorationImage(
+            image: AssetImage('assets/background.jpg'),
+            fit: BoxFit.cover,
           ),
         ),
         child: SafeArea(

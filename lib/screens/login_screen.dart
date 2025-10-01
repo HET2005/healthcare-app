@@ -40,10 +40,9 @@ class _LoginScreenState extends State<LoginScreen> {
       appBar: AppBar(title: Text("Login")),
       body: Container(
         decoration: BoxDecoration(
-          gradient: LinearGradient(
-            colors: [Color(0xFF80F6FF), Color(0xFF69EC91)],
-            begin: Alignment.centerLeft,
-            end: Alignment.centerRight,
+          image: DecorationImage(
+            image: AssetImage('assets/background.jpg'),
+            fit: BoxFit.cover,
           ),
         ),
         child: Center(
@@ -58,6 +57,8 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
+                    Image.asset('assets/app_icon.png', height: 80),
+                    SizedBox(height: 16),
                     TextField(
                       controller: idController,
                       decoration: InputDecoration(labelText: "Enter User ID"),
