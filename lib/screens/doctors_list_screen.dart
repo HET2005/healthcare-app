@@ -20,22 +20,25 @@ class _DoctorsListScreenState extends State<DoctorsListScreen> {
   ];
 
   Future<void> _makePhoneCall(String phoneNumber) async {
-    final Uri phoneUri = Uri(scheme: 'tel', path: phoneNumber);
-    
+    final String sanitized = phoneNumber.replaceAll(RegExp(r'[^0-9+]'), '');
+    final Uri phoneUri = Uri(scheme: 'tel', path: sanitized);
+
     try {
-      if (await canLaunchUrl(phoneUri)) {
-        await launchUrl(phoneUri);
+      final bool supported = await canLaunchUrl(phoneUri);
+      if (supported) {
+        await launchUrl(
+          phoneUri,
+          mode: LaunchMode.externalApplication,
+        );
       } else {
-        // Fallback: show error message
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
-            content: Text("Cannot make phone call. Please check your device settings."),
+            content: Text("No dialer available. Try on a physical device."),
             backgroundColor: Colors.red,
           ),
         );
       }
     } catch (e) {
-      // Handle any errors
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("Error making phone call: $e"),

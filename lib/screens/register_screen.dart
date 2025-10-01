@@ -14,71 +14,85 @@ class _RegisterScreenState extends State<RegisterScreen> {
   final passwordController = TextEditingController();
   String message = "";
 
-  void registerUser() {
-    String id = idController.text.trim();
-    String pass = passwordController.text.trim();
+  Future<void> registerUser() async {
+    final String id = idController.text.trim();
+    final String pass = passwordController.text.trim();
 
     if (id.isEmpty || pass.isEmpty) {
       setState(() => message = "⚠ Please enter all details.");
-    } else if (UserDatabase.userExists(id)) {
+      return;
+    }
+
+    final bool exists = await UserDatabase.userExists(id);
+    if (exists) {
       setState(() => message = "⚠ User ID already exists.");
-    } else {
-      UserDatabase.register(id, pass);
-      setState(() => message = "✅ Account created successfully!");
-      Future.delayed(Duration(seconds: 1), () {
-        Navigator.pop(context);
-      });
+      return;
+    }
+
+    await UserDatabase.register(id, pass);
+    if (!mounted) return;
+    setState(() => message = "✅ Account created successfully!");
+    await Future.delayed(Duration(seconds: 1));
+    if (!mounted) return;
+    Navigator.pop(context);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Register")),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF80F6FF), Color(0xFF69EC91)],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ),
+        ),
+        child: Center(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+              child: Container(
+                width: 350,
+                padding: EdgeInsets.all(24),
+                color: Colors.white.withOpacity(0.25),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      controller: idController,
+                      decoration: InputDecoration(
+                        labelText: "Enter New User ID",
+                      ),
+                    ),
+                    SizedBox(height: 16),
+                    TextField(
+                      controller: passwordController,
+                      decoration: InputDecoration(
+                        labelText: "Create Password",
+                      ),
+                      obscureText: true,
+                    ),
+                    SizedBox(height: 24),
+                    ElevatedButton(
+                      onPressed: registerUser,
+                      child: Text("Create Account"),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      message,
+                      style: TextStyle(
+                        color: message.contains("✅") ? Colors.green : Colors.red,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
           ),
-          Center(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-                child: Container(
-                  width: 350,
-                  padding: EdgeInsets.all(24),
-                  color: Colors.white.withOpacity(0.25),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      TextField(
-                        controller: idController,
-                        decoration: InputDecoration(
-                          labelText: "Enter New User ID",
-                        ),
-                      ),
-                      SizedBox(height: 16),
-                      TextField(
-                        controller: passwordController,
-                        decoration: InputDecoration(
-                          labelText: "Create Password",
-                        ),
-                        obscureText: true,
-                      ),
-                      SizedBox(height: 24),
-                      ElevatedButton(
-                        onPressed: registerUser,
-                        child: Text("Create Account"),
-                      ),
-                      SizedBox(height: 10),
-                      Text(
-                        message,
-                        style: TextStyle(
-                          color: message.contains("✅")
-                              ? Colors.green
-                              : Colors.red,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }

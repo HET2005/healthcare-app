@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'screens/login_screen.dart';
+import 'services/user_database.dart';
 
-void main() {
+Future<void> main() async {
+  WidgetsFlutterBinding.ensureInitialized();
+  await UserDatabase.init();
   runApp(HealthcareApp());
 }
 
@@ -11,7 +14,7 @@ class HealthcareApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Healthcare App',
+      title: 'Health',
       theme: ThemeData(primarySwatch: Colors.teal),
       home: LoginScreen(),
     );

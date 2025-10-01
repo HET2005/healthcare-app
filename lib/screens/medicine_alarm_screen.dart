@@ -24,6 +24,7 @@ class _MedicineAlarmScreenState extends State<MedicineAlarmScreen> {
 
   Future<void> _initializeNotifications() async {
     tz.initializeTimeZones();
+    await _requestPermissions();
     
     const AndroidInitializationSettings initializationSettingsAndroid =
         AndroidInitializationSettings('@mipmap/ic_launcher');
@@ -42,6 +43,21 @@ class _MedicineAlarmScreenState extends State<MedicineAlarmScreen> {
     );
     
     await _notifications.initialize(initializationSettings);
+
+    const AndroidNotificationChannel channel = AndroidNotificationChannel(
+      'medicine_alarms_v2',
+      'Medicine Alarms',
+      description: 'Notifications for medicine reminders',
+      importance: Importance.high,
+    );
+    final androidPlugin = _notifications.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+    await androidPlugin?.createNotificationChannel(channel);
+  }
+
+  Future<void> _requestPermissions() async {
+    final androidPlugin = _notifications.resolvePlatformSpecificImplementation<AndroidFlutterLocalNotificationsPlugin>();
+    await androidPlugin?.requestNotificationsPermission();
+    await androidPlugin?.requestExactAlarmsPermission();
   }
 
   Future<void> _showDateTimePicker() async {
@@ -112,12 +128,12 @@ class _MedicineAlarmScreenState extends State<MedicineAlarmScreen> {
       tz.TZDateTime.from(alarmDateTime, tz.local),
       const NotificationDetails(
         android: AndroidNotificationDetails(
-          'medicine_alarms',
+          'medicine_alarms_v2',
           'Medicine Alarms',
           channelDescription: 'Notifications for medicine reminders',
           importance: Importance.high,
           priority: Priority.high,
-          sound: RawResourceAndroidNotificationSound('alarm'),
+          // Use default sound to avoid missing raw resource issues
         ),
         iOS: DarwinNotificationDetails(
           sound: 'alarm.wav',
@@ -127,7 +143,7 @@ class _MedicineAlarmScreenState extends State<MedicineAlarmScreen> {
         ),
       ),
       uiLocalNotificationDateInterpretation: UILocalNotificationDateInterpretation.absoluteTime,
-      matchDateTimeComponents: DateTimeComponents.time,
+      androidScheduleMode: AndroidScheduleMode.exactAllowWhileIdle,
     );
   }
 

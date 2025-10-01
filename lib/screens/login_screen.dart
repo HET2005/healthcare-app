@@ -16,74 +16,89 @@ class _LoginScreenState extends State<LoginScreen> {
   final passwordController = TextEditingController();
   String message = "";
 
-  void loginUser() {
-    String id = idController.text.trim();
-    String pass = passwordController.text.trim();
+  Future<void> loginUser() async {
+    final String id = idController.text.trim();
+    final String pass = passwordController.text.trim();
 
-    if (UserDatabase.login(id, pass)) {
+    final bool ok = await UserDatabase.login(id, pass);
+    if (ok) {
+      if (!mounted) return;
       setState(() => message = "✅ Login successful!");
       Navigator.push(
         context,
         MaterialPageRoute(builder: (context) => HomeScreen(userId: id)),
       );
     } else {
+      if (!mounted) return;
       setState(() => message = "❌ Invalid ID or password.");
-                  colors: [Color(0xFF80F6FF), Color(0xFF69EC91)],
-                  begin: Alignment.centerLeft,
-                  end: Alignment.centerRight,
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      appBar: AppBar(title: Text("Login")),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF80F6FF), Color(0xFF69EC91)],
+            begin: Alignment.centerLeft,
+            end: Alignment.centerRight,
+          ),
+        ),
+        child: Center(
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(16),
+            child: BackdropFilter(
+              filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
+              child: Container(
+                width: 350,
+                padding: EdgeInsets.all(24),
+                color: Colors.white.withOpacity(0.25),
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    TextField(
+                      controller: idController,
+                      decoration: InputDecoration(labelText: "Enter User ID"),
+                    ),
+                    SizedBox(height: 16),
+                    TextField(
+                      controller: passwordController,
+                      decoration: InputDecoration(
+                        labelText: "Enter Password",
+                      ),
+                      obscureText: true,
+                    ),
+                    SizedBox(height: 24),
+                    ElevatedButton(
+                      onPressed: loginUser,
+                      child: Text("Login"),
+                    ),
+                    TextButton(
+                      onPressed: () {
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => RegisterScreen(),
+                          ),
+                        );
+                      },
+                      child: Text("Don't have an ID? Create one"),
+                    ),
+                    SizedBox(height: 10),
+                    Text(
+                      message,
+                      style: TextStyle(
+                        color: message.contains("✅") ? Colors.green : Colors.red,
+                      ),
+                    ),
+                  ],
                 ),
               ),
             ),
           ),
-          Center(
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(16),
-              child: BackdropFilter(
-                filter: ImageFilter.blur(sigmaX: 15, sigmaY: 15),
-                child: Container(
-                  width: 350,
-                  padding: EdgeInsets.all(24),
-                  color: Colors.white.withOpacity(0.25),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      TextField(
-                        controller: idController,
-                        decoration: InputDecoration(labelText: "Enter User ID"),
-                      ),
-                      SizedBox(height: 16),
-                      TextField(
-                        controller: passwordController,
-                        decoration: InputDecoration(
-                          labelText: "Enter Password",
-                        ),
-                        obscureText: true,
-                      ),
-                      SizedBox(height: 24),
-                      ElevatedButton(
-                        onPressed: loginUser,
-                        child: Text("Login"),
-                      ),
-                      TextButton(
-                        onPressed: () {
-                          Navigator.push(
-                            context,
-                            MaterialPageRoute(
-                              builder: (context) => RegisterScreen(),
-                            ),
-                          );
-                        },
-                        child: Text("Don't have an ID? Create one"),
-                      ),
-                      SizedBox(height: 10),
-                      Text(message, style: TextStyle(color: Colors.red)),
-                    ],
-                  ),
-                ),
-              ),
-            ),
-          ),
-        ],
+        ),
       ),
     );
   }
